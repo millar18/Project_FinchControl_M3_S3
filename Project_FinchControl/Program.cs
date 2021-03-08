@@ -1097,7 +1097,7 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
 
             Console.WriteLine();
             Console.WriteLine(); 
-            Console.WriteLine("\tFinch sensess that the current Tempurature is {0}° C", CurrentTemperatureValue);
+            Console.WriteLine("\tFinch sensess that the current Tempurature is {0}° C", CurrentTemperatureValue.ToString("n"));
             Console.WriteLine();
 
 
@@ -1196,7 +1196,7 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
 
             Console.WriteLine();
             Console.WriteLine(); 
-            Console.WriteLine("Finch senses the Current Temperature is {0}° C", CurrentTemperatureValue);
+            Console.WriteLine("Finch senses the Current Temperature is {0}° C", CurrentTemperatureValue.ToString("n"));
 
             Console.WriteLine();
             Console.WriteLine();
