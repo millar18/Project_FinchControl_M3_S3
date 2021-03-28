@@ -14,7 +14,7 @@ namespace Project_FinchControl
     // Description:  Starting Solution for BirdBrain Technologies Finch - Tuples
     // Application Type: Console
     // Author: Jackilynn Millard
-    // Dated Created: 03/21/2021
+    // Dated 03/21/2021
     // **************************************************************************
     // **************************************************************************
 
