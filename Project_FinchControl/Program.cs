@@ -27,17 +27,17 @@ namespace Project_FinchControl
 
     public enum Commands
         {
-            None,
-            MoveForward,
-            MoveBackward,
-            StopMotors,
-            Wait,
-            TurnRight,
-            TurnLeft,
-            LEDOn,
-            LEDOff,
-            GetTemperature,
-            Done
+            NONE,
+            MOVEFORWARD,
+            MOVEBACKWARD,
+            STOPMOTORS,
+            WAIT,
+            TURNRIGHT,
+            TURNLEFT,
+            LEDON,
+            LEDOFF,
+            GETTEMPERATURE,
+            DONE
         }
 
    
@@ -121,7 +121,7 @@ namespace Project_FinchControl
                         break;
 
                     case "e":
-
+                        UserProgrammingDisplayMenuScreen(finchRobot);
                         break;
 
                     case "f":
@@ -1344,7 +1344,7 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
             
 
 
-            (int MotorSpeed, int LEDBrightness, double WaitSeconds) CommandParameters = (0,0,0);
+            (int MotorSpeed, int LEDBrightness, int WaitSeconds) CommandParameters = (0,0,0);
 
 
             List<Commands> Commands = new List<Commands>();
@@ -1374,7 +1374,7 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
                 switch (menuChoice)
                 {
                     case "a":
-                        CommandParameters = UserProgrammingDisplayGetCommandParameters();
+                        CommandParameters = ((int MotorSpeed, int LEDBrightness, int WaitSeconds))UserProgrammingDisplayGetCommandParameters();
                         break;
 
                     case "b":
@@ -1403,69 +1403,74 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
             } while (!quitUserProgrammingMenu);
         }
 
-        public static void UserProgrammingDisplayExecuteCommands(Finch finchRobot, List<Commands> Command, (int MotorSpeed, int LEDBrightness, double WaitSeconds) CommandParameters)
+        public static void UserProgrammingDisplayExecuteCommands(Finch finchRobot, List<Commands> Command, (int MotorSpeed, int LEDBrightness, int WaitSeconds) CommandParameters)
         {
 
             int MotorSpeed = CommandParameters.MotorSpeed;
             int LEDBrightness = CommandParameters.LEDBrightness;
-            int WaitSeconds = (int)(CommandParameters.WaitSeconds * 1000);
+            int WaitSeconds = CommandParameters.WaitSeconds;
             double Temperature;
             string CommandInput = "";
+
+            DisplayScreenHeader("Execute Commands");
+
+            Console.WriteLine("\tFinch will now execute the Commands you selected.");
+            DisplayContinuePrompt();
 
             foreach (Commands command in Command)
             {
                 switch (command)
                 {
-                    case Commands.None:
+                    case Commands.NONE:
                         break;
 
-                    case Commands.MoveForward:
+                    case Commands.MOVEFORWARD:
                         finchRobot.setMotors(MotorSpeed, MotorSpeed);
-                        CommandInput = Commands.MoveForward.ToString();
+                        CommandInput = Commands.MOVEFORWARD.ToString();
                         break;
 
-                    case Commands.MoveBackward:
+                    case Commands.MOVEBACKWARD:
                         finchRobot.setMotors(-MotorSpeed, -MotorSpeed);
-                        CommandInput = Commands.MoveBackward.ToString();
+                        CommandInput = Commands.MOVEBACKWARD.ToString();
                         break;
 
-                    case Commands.StopMotors:
+                    case Commands.STOPMOTORS:
                         finchRobot.setMotors(0, 0);
-                        CommandInput = Commands.StopMotors.ToString();
+                        CommandInput = Commands.STOPMOTORS.ToString();
                         break;
 
-                    case Commands.Wait:
+                    case Commands.WAIT:
                         finchRobot.wait(WaitSeconds);
-                        CommandInput = Commands.Wait.ToString();
+                        CommandInput = Commands.WAIT.ToString();
                         break;
 
-                    case Commands.TurnRight:
+                    case Commands.TURNRIGHT:
                         finchRobot.setMotors(0, MotorSpeed);
-                        CommandInput = Commands.TurnRight.ToString();
+                        CommandInput = Commands.TURNRIGHT.ToString();
                         break;
 
-                    case Commands.TurnLeft:
+                    case Commands.TURNLEFT:
                         finchRobot.setMotors(MotorSpeed, 0);
-                        CommandInput = Commands.TurnLeft.ToString();
+                        CommandInput = Commands.TURNLEFT.ToString();
                         break;
 
-                    case Commands.LEDOn:
+                    case Commands.LEDON:
                         finchRobot.setLED(LEDBrightness, LEDBrightness, LEDBrightness);
-                        CommandInput = Commands.LEDOn.ToString();
+                        CommandInput = Commands.LEDON.ToString();
                         break;
 
-                    case Commands.LEDOff:
+                    case Commands.LEDOFF:
                         finchRobot.setLED(0, 0, 0);
-                        CommandInput = Commands.LEDOff.ToString();
+                        CommandInput = Commands.LEDOFF.ToString();
                         break;
 
-                    case Commands.GetTemperature:
+                    case Commands.GETTEMPERATURE:
                         Temperature = finchRobot.getTemperature();
                         CommandInput = $"\tFinch sensess that the current Tempurature is {Temperature:n}° C";
                         break;
 
-                    case Commands.Done:
-                        CommandInput = Commands.Done.ToString();
+                    case Commands.DONE:
+                        CommandInput = Commands.DONE.ToString();
                         break;
 
                     default:
@@ -1473,99 +1478,100 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
                 }
                 Console.WriteLine("\t{0}", CommandInput);
             }
+            finchRobot.setMotors(0, 0);
+            finchRobot.setLED(0, 0, 0);
         }
 
 
-        static void UserProgrammingDisplayCommands(List<Commands> Commands)
+        static void UserProgrammingDisplayCommands(List<Commands> Command)
         {
-            DisplayScreenHeader("Finch Command List");
-            foreach (Commands Command in Commands)
+            DisplayScreenHeader("Finch will perform the following Commands");
+            foreach (Commands command in Command)
             {
-                Console.WriteLine($"\t{Commands}");
+                Console.WriteLine($"\t{command}");
             }
             DisplayMenuPrompt("Return to User Programming Menu");
         }
 
-        private static void UserProgrammingDisplayGetFinchCommands(List<Commands> Commands)
+
+        static void UserProgrammingDisplayGetFinchCommands(List<Commands> Command)
         {
- 
-            Commands Command = Commands.None;
+            Commands command = Commands.NONE;
 
             DisplayScreenHeader("Finch Commands");
 
-            int commandCount = 1;
-
-            Console.WriteLine("\tCommands Available");
+            int CommandCount = 1;
+                      
+            Console.WriteLine("Finch can perform the following:");
             Console.WriteLine();
-            Console.Write("\t-");
+            Console.WriteLine("\t-");
+            Console.WriteLine();
 
             foreach (string CommandName in Enum.GetNames(typeof(Commands)))
             {
-                Console.Write($"- {CommandName.ToLower()}  -");
-                if (commandCount % 5 == 0) Console.Write("\n\t-");
-                commandCount++;
+                Console.Write($"- {CommandName.ToUpper()}  -  ");
+                if (CommandCount % 5 == 0) Console.WriteLine("-\n\t-");
+                CommandCount++;
             }
             Console.WriteLine();
 
-            while (Command != Commands.Done)
+            while (command != Commands.DONE)
             {
-                Console.Write("\tEnter command: ");
+                Console.Write("\tEnter the commands you would like Finch to perform from the list above.  ");
 
-                if (Enum.TryParse(Console.ReadLine().ToUpper(), out Command))
+                if (Enum.TryParse(Console.ReadLine().ToUpper(), out command))
                 {
-                    Commands.Add(Command);
+                    Command.Add(command);
                 }
                 else
                 {
-                    Console.WriteLine("\t\tPlease enter a command from the list above.");
+                    Console.WriteLine("\t\tIncorrect command.  Please enter a command from the list above.  ");
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine("\tYour list of Commands for Finch to perform");
-
-            for (int i = 0; i < Commands.Count; i++)
-            {
-                Console.WriteLine(Commands[i]);
-            }
-
-            DisplayContinuePrompt();
-
+            DisplayMenuPrompt("Return to User Programming Menu.");
         }
 
         static (int MotorSpeed, int LEDBrightness, double WaitSeconds) UserProgrammingDisplayGetCommandParameters()
         {
-            DisplayScreenHeader("Finch Command Parameters Menu");
-            (int MotorSpeed, int LEDBrightness, double WaitSeconds) CommandParameters = (0,0,0);
+            DisplayScreenHeader("Finch Command Parameters");
+            (int MotorSpeed, int LEDBrightness, int WaitSeconds) CommandParameters = (0,0,0);
+            int CommandSeconds;
 
+            Console.WriteLine();
             Console.WriteLine("How fast would you like Finch to go?   (1 - 255)");
-            int.TryParse(Console.ReadLine(), out CommandParameters.MotorSpeed);
-            while (CommandParameters.MotorSpeed < 0 || CommandParameters.MotorSpeed >= 255 || CommandParameters.MotorSpeed == 0) ;
+            CommandParameters.MotorSpeed = Convert.ToInt32(Console.ReadLine());
+
+            while (CommandParameters.MotorSpeed < 1 || CommandParameters.MotorSpeed > 255)
             {
                 Console.WriteLine("Finch cannot go that speed, please enter a number between 1 and 255.");
                 CommandParameters.MotorSpeed = int.Parse(Console.ReadLine());
             }
-            Console.WriteLine(); 
-            Console.WriteLine(" You wish for Finch to travel at a speed of {0}.", CommandParameters.MotorSpeed);
-            Console.WriteLine();
-            Console.WriteLine();
 
+
+            Console.WriteLine();
             Console.WriteLine("How bright would you like Finch to display the LEDs?  (1 - 255)");
-            int.TryParse(Console.ReadLine(), out CommandParameters.LEDBrightness);
-            while (CommandParameters.LEDBrightness < 0 || CommandParameters.LEDBrightness >= 255 || CommandParameters.LEDBrightness == 0) ;
+            CommandParameters.LEDBrightness = Convert.ToInt32(Console.ReadLine());
+
+            while (CommandParameters.LEDBrightness < 1 || CommandParameters.LEDBrightness > 255)
             {
-                Console.WriteLine("Finch does not have that setting for the LEDs, please enter a number between 1 and 255.");
+                Console.WriteLine("Finch does not have that setting for the LEDs, please enter a number between 1 and 255.") ;
                 CommandParameters.LEDBrightness = int.Parse(Console.ReadLine());
             }
-            Console.WriteLine("You wish for the Finch to display the LEDs at {0} brightness", CommandParameters.LEDBrightness);
 
-            Console.WriteLine("Enter the amount time you want the wait duration to be in seconds, (1 - 10)");
-            double.TryParse(Console.ReadLine(), out CommandParameters.WaitSeconds);
-            while (CommandParameters.WaitSeconds < 0 || CommandParameters.WaitSeconds >= 10 || CommandParameters.WaitSeconds == 0) ;
+
+            Console.WriteLine();
+            Console.WriteLine("Enter the amount time you want the wait duration to be in seconds, (1 - 10)") ;
+            CommandSeconds = Convert.ToInt32(Console.ReadLine());
+            CommandParameters.WaitSeconds = CommandSeconds * 100;
+
+            while (CommandSeconds < 1 || CommandSeconds > 10)
             {
-                Console.WriteLine("Your selection is not valid.  Please enter an amount of time between 1 and 10");
-                CommandParameters.WaitSeconds = double.Parse(Console.ReadLine());
+                Console.WriteLine("Finch cannot wait that amount of time.  Please enter an amount of time between 1 and 10") ;
+                CommandParameters.WaitSeconds = int.Parse(Console.ReadLine());
             }
+
+
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
@@ -1573,7 +1579,7 @@ static bool AlarmSystemLightThresholdAlarm(Finch finchRobot, string SensorToMoni
             Console.WriteLine();
             Console.WriteLine("\tFinch's Speed:  {0}", CommandParameters.MotorSpeed);
             Console.WriteLine("\tLED Brightness:  {0}", CommandParameters.LEDBrightness);
-            Console.WriteLine("\tWait Duration:  {0}", CommandParameters.WaitSeconds);
+            Console.WriteLine("\tWait Duration:  {0}", CommandSeconds);
             Console.WriteLine();
             Console.WriteLine();
             DisplayMenuPrompt("Return to User Programming Menu.");
