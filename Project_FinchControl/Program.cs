@@ -11,7 +11,7 @@ namespace Project_FinchControl
     // *****************************************************************************
     // *****************************************************************************
     // Title: Finch Control - Menu Starter
-    // Description:  Starting Solution for BirdBrain Technologies Finch - TextFiles
+    // Description:  Starting Solution for BirdBrain Technologies Finch - File I/O
     // Application Type: Console
     // Author: Jackilynn Millard
     // Dated 03/28/2021
@@ -72,8 +72,12 @@ namespace Project_FinchControl
                 Console.ForegroundColor = themeColors.foregroundColor;
                 Console.BackgroundColor = themeColors.backgroundColor;
                 Console.Clear();
-                DisplayScreenHeader("Set Theme");
+                DisplayScreenHeader("Welcome to Finch's Program");
 
+                Console.WriteLine();
+                Console.WriteLine("\t\t\tSet Theme");
+                Console.WriteLine();
+                Console.WriteLine();
                 Console.WriteLine($"\tCurrent foreground color: {Console.ForegroundColor}");
                 Console.WriteLine($"\tCurrent background color: {Console.BackgroundColor}");
                 Console.WriteLine();
@@ -124,7 +128,7 @@ namespace Project_FinchControl
 
                     if (!validConsoleColor)
                     {
-                        Console.WriteLine("\n\t***** That is not a valid selection.  Please enter a valid Color *****\n");
+                        Console.WriteLine("\n\t Finch does not have that color.  Please try a different color.\n");
                     }
                     else
                     {
