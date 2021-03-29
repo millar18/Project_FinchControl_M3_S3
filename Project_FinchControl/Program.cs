@@ -8,15 +8,15 @@ using FinchAPI;
 namespace Project_FinchControl
 {
 
-    // **************************************************************************
-    // **************************************************************************
+    // *****************************************************************************
+    // *****************************************************************************
     // Title: Finch Control - Menu Starter
-    // Description:  Starting Solution for BirdBrain Technologies Finch - Tuples
+    // Description:  Starting Solution for BirdBrain Technologies Finch - TextFiles
     // Application Type: Console
     // Author: Jackilynn Millard
-    // Dated 03/21/2021
-    // **************************************************************************
-    // **************************************************************************
+    // Dated 03/28/2021
+    // *****************************************************************************
+    // *****************************************************************************
 
 
     /// 
@@ -49,21 +49,125 @@ namespace Project_FinchControl
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            SetTheme();
+
+
+            {
+                DisplaySetTheme();
+            }
+
+            /// <summary>
+            /// *****************************************************************
+            /// *                  Set Console Theme Screen                     *
+            /// *****************************************************************
+            /// </summary>
+            /// 
+
+            void DisplaySetTheme()
+            {
+                (ConsoleColor foregroundColor, ConsoleColor backgroundColor) themeColors;
+                bool themeChosen = false;
+
+
+                themeColors = ReadThemeData();
+                Console.ForegroundColor = themeColors.foregroundColor;
+                Console.BackgroundColor = themeColors.backgroundColor;
+                Console.Clear();
+                DisplayScreenHeader("Set Theme");
+
+                Console.WriteLine($"\tCurrent foreground color: {Console.ForegroundColor}");
+                Console.WriteLine($"\tCurrent background color: {Console.BackgroundColor}");
+                Console.WriteLine();
+
+                Console.Write("\tWould you like to change the current theme? yes or no  ");
+                if (Console.ReadLine().ToLower() == "yes")
+                {
+                    do
+                    {
+                        themeColors.foregroundColor = GetConsoleColorFromUser("foreground");
+                        themeColors.backgroundColor = GetConsoleColorFromUser("background");
+
+                        //
+                        // set new theme
+                        //
+                        Console.ForegroundColor = themeColors.foregroundColor;
+                        Console.BackgroundColor = themeColors.backgroundColor;
+                        Console.Clear();
+                        DisplayScreenHeader("Set Theme");
+                        Console.WriteLine($"\tNew foreground color: {Console.ForegroundColor}");
+                        Console.WriteLine($"\tNew background color: {Console.BackgroundColor}");
+
+                        Console.WriteLine();
+                        Console.Write("\tIs this the theme you would like? yes or no  ");
+                        if (Console.ReadLine().ToLower() == "yes")
+                        {
+                            themeChosen = true;
+                            WriteThemeData(themeColors.foregroundColor, themeColors.backgroundColor);
+                        }
+
+                    } while (!themeChosen);
+                }
+                DisplayContinuePrompt();
+            }
+
+
+            ConsoleColor GetConsoleColorFromUser(string property)
+            {
+                ConsoleColor consoleColor;
+                bool validConsoleColor;
+
+                do
+                {
+                    Console.WriteLine(); 
+                    Console.Write($"\tEnter a color for the {property}:  ");
+                    validConsoleColor = Enum.TryParse<ConsoleColor>(Console.ReadLine(), true, out consoleColor);
+
+
+                    if (!validConsoleColor)
+                    {
+                        Console.WriteLine("\n\t***** That is not a valid selection.  Please enter a valid Color *****\n");
+                    }
+                    else
+                    {
+                        validConsoleColor = true;
+                    }
+
+                } while (!validConsoleColor);
+
+                return consoleColor;
+            }
+
+
+            (ConsoleColor foregroundColor, ConsoleColor backgroundColor) ReadThemeData()
+            {
+                string dataPath = @"Data/Theme.txt";
+                string[] themeColors;
+
+                ConsoleColor foregroundColor;
+                ConsoleColor backgroundColor;
+
+                themeColors = File.ReadAllLines(dataPath);
+
+                Enum.TryParse(themeColors[0], true, out foregroundColor);
+                Enum.TryParse(themeColors[1], true, out backgroundColor);
+
+                return (foregroundColor, backgroundColor);
+            }
+
+
+            void WriteThemeData(ConsoleColor foreground, ConsoleColor background)
+            {
+                string dataPath = @"Data/Theme.txt";
+
+                File.WriteAllText(dataPath, foreground.ToString() + "\n");
+                File.AppendAllText(dataPath, background.ToString());
+            }
 
             DisplayWelcomeScreen();
             DisplayMenuScreen();
             DisplayClosingScreen();
         }
 
-        /// <summary>
-        /// setup the console theme
-        /// </summary>
-        static void SetTheme()
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.DarkCyan;
-        }
+
 
         /// <summary>
         /// *****************************************************************
